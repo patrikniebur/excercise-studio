@@ -1,7 +1,7 @@
 {
-  "name": "voice_controlled_timer",
+  "name": "voice_controlled_exercise",
   "version": "1.0.0",
-  "description": "Voice controlled timer using browser speech API",
+  "description": "Voice controlled exercise guide",
   "scripts": {
     "start": "parcel src/index.html",
     "build": "parcel build src/index.html --public-url ./"
@@ -10,6 +10,7 @@
   "license": "ISC",
   "devDependencies": {
     "@babel/core": "^7.22.11",
+    "@tanstack/router-devtools": "^0.0.1-beta.171",
     "@types/dom-speech-recognition": "^0.0.1",
     "@types/react": "^18.2.21",
     "@types/react-dom": "^18.2.7",
@@ -21,7 +22,12 @@
     "typescript-plugin-css-modules": "^5.0.1"
   },
   "dependencies": {
+    "@chakra-ui/react": "^2.8.0",
+    "@tanstack/react-router": "^0.0.1-beta.171",
+    "localforage": "^1.10.0",
     "react": "^18.2.0",
+    "react-dnd": "^16.0.1",
+    "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^18.2.0",
     "react-speech-recognition": "^3.10.0"
   },

@@ -1,13 +1,17 @@
-import 'regenerator-runtime/runtime'
+import "regenerator-runtime/runtime";
 
 import { createRoot } from "react-dom/client";
 import { StrictMode } from "react";
 
-import { App } from "./components/App/App";
+import { App } from "./components/App";
+import { registerSW } from './helpers/serviceWorkerTools'
 
-document.body.innerHTML = '<div id="app"></div>';
+registerSW()
+const app = document.createElement("div");
 
-const root = createRoot(document.getElementById("app")!);
+document.body.appendChild(app);
+
+const root = createRoot(app);
 root.render(
   <StrictMode>
     <App />

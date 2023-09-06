@@ -3,10 +3,10 @@ import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
 
-import { Timer } from "../Timer/Timer";
+import { Timer } from "./Timer";
 import * as style from "./styles.module.css";
 
-export function App() {
+export function VoiceControlledTimer() {
   const [resetKey, setResetKey] = React.useState(0);
   const lastCommand = useVoiceCommands();
 
@@ -16,11 +16,7 @@ export function App() {
     }
   }, [lastCommand]);
 
-  return (
-    <div className={style.container}>
-      <Timer key={resetKey} run={lastCommand === "start"} />
-    </div>
-  );
+  return <Timer key={resetKey} run={lastCommand === "start"} />;
 }
 
 function useVoiceCommands() {
@@ -35,7 +31,10 @@ function useVoiceCommands() {
           "pause",
           "pose" /* pose - catches misunderstood pause */,
         ],
-        callback: (lastCommand) => { setLastCommand(lastCommand); resetTranscript(); },
+        callback: (lastCommand) => {
+          setLastCommand(lastCommand);
+          resetTranscript();
+        },
         matchInterim: true,
         isFuzzyMatch: true,
       },
