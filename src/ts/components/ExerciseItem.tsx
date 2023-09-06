@@ -1,36 +1,28 @@
 import React from "react";
-import { useDrag, useDrop } from "react-dnd";
 import { Box, Card, CardBody, Flex, Image, Textarea } from "@chakra-ui/react";
 
-const ITEM_TYPE = "EXERCISE_ITEM";
+type Props = { file: FileSystemHandle; isDragging?: boolean };
 
-export function ExerciseItem({ file }: { file: FileSystemHandle }) {
-  const ref = React.useRef<HTMLDivElement>(null);
-  const url = useFileUrl(file);
-  const [_, drop] = useDrop({
-    accept: ITEM_TYPE,
-    hover: console.log,
-  });
-  const [__, drag] = useDrag({
-    type: ITEM_TYPE,
-    item: () => {
-      return { filename: file.name };
-    },
-  });
-  drag(drop(ref));
-  return (
-    <Card ref={ref}>
-      <CardBody>
-        <Flex maxW="100%" overflow="hidden" gap="5">
-          <Box flexBasis="30%">
-            <Image src={url} alt={file.name} height="auto" />
-          </Box>
-          <Textarea placeholder={file.name} />
-        </Flex>
-      </CardBody>
-    </Card>
-  );
-}
+export const ExerciseItem = React.forwardRef<HTMLDivElement, Props>(
+  ({ file, isDragging }, ref) => {
+    const url = useFileUrl(file);
+
+    return (
+      <Card ref={ref} style={{ opacity: isDragging ? 0.5 : 1 }}>
+        <CardBody>
+          <Flex maxW="100%" overflow="hidden" gap="5">
+            <Box flexBasis="30%">
+              <Image src={url} alt={file.name} height="auto" />
+            </Box>
+            <Textarea placeholder={file.name} />
+          </Flex>
+        </CardBody>
+      </Card>
+    );
+  },
+);
+
+ExerciseItem.displayName = "ExerciseItem";
 
 function useFileUrl(fileHandle: FileSystemHandle) {
   const [url, set] = React.useState<string>();

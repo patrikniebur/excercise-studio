@@ -1,14 +1,23 @@
 import React from "react";
 import { Button, Grid, Flex } from "@chakra-ui/react";
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
 
 import { useGlobalContext } from "../GlobalContext";
 import { ExerciseItem } from "../components/ExerciseItem";
+import { Sortable } from "../components/Sortable/Sortable";
 import { getDirectoryContent, isImage } from "../helpers/directoryFunctions";
+
+type SortableItem = {
+  id: string
+  file: FileSystemFileHandle;
+}
 
 export function Home() {
   const [listing, refreshListing] = useDirectoryListing();
+  const [orderedListing, setOrderedListing] = React.useState<SortableItem[]>([]);
+
+  React.useEffect(() => {
+    setOrderedListing(listing.map((item) => ({ file: item, id: item.name })));
+  }, [listing]);
 
   return (
     <Flex
@@ -21,18 +30,16 @@ export function Home() {
     >
       <Button onClick={refreshListing}>Refresh content</Button>
       <Grid templateColumns="repeat(3, 1fr)" gap={6}>
-        <DndProvider backend={HTML5Backend}>
-          <ExercisePlannerStudio listing={listing} />
-        </DndProvider>
+        <Sortable
+          items={orderedListing}
+          onReorder={(items) => setOrderedListing(items)}
+          render={(item, ref, { isDragging }) => (
+            <ExerciseItem ref={ref} file={item.file} isDragging={isDragging} />
+          )}
+        />
       </Grid>
     </Flex>
   );
-}
-
-function ExercisePlannerStudio({ listing }: { listing: FileSystemHandle[] }) {
-  return listing.map((imageFile) => (
-    <ExerciseItem key={imageFile.name} file={imageFile} />
-  ));
 }
 
 function useDirectoryListing() {
