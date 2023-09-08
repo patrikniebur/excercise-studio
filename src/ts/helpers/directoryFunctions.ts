@@ -1,12 +1,19 @@
-export async function getDirectoryContent(d: FileSystemDirectoryHandle) {
+import { DirectoryConfiguration, ExerciseConfig } from "../types";
+
+async function getDirectoryContent(
+  d: FileSystemDirectoryHandle,
+  predicate: (f: FileSystemHandle) => Promise<boolean> | boolean = () => true,
+) {
   const handles: FileSystemHandle[] = [];
   try {
     // @ts-ignore
     for await (const item of d.values()) {
-      handles.push(item);
+      if (await predicate(item)) {
+        handles.push(item);
+      }
     }
   } catch (e) {
-    console.log('Cannot read from directory ', d)
+    console.log("Cannot read from directory ", d);
     console.error(e);
   }
 
@@ -14,7 +21,7 @@ export async function getDirectoryContent(d: FileSystemDirectoryHandle) {
 }
 
 const reImageExt = /(jpe?g|png|gif|bmp)$/;
-export async function isImage(f: FileSystemHandle) {
+async function isImage(f: FileSystemHandle) {
   if (f.kind === "file" && reImageExt.test(f.name)) {
     // @ts-ignore
     const file: File = await f.getFile();
@@ -38,27 +45,104 @@ export async function retrieveDirectoryHandle() {
   }
 }
 
-export async function retrieveDirectoryEntry(e: React.DragEvent) {
-  e.preventDefault();
-  const items = e.dataTransfer.items;
-  return items[0].webkitGetAsEntry() as FileSystemDirectoryEntry;
-}
-
-export async function writeFileIntoDirectory(d: FileSystemDirectoryHandle) {
-  const newFile = await d.getFileHandle("config.json", {
+export async function writeFileIntoDirectory(
+  d: FileSystemDirectoryHandle,
+  fileName: string,
+  content: string,
+) {
+  const newFile = await d.getFileHandle(fileName, {
     create: true,
   });
   const writable = await newFile.createWritable();
-  await writable.write(JSON.stringify({ config: true, written: "success" }));
+  await writable.write(content);
   await writable.close();
 }
 
-export function getDirectoryImageUrl(d: FileSystemDirectoryEntry) {
-  const reader = d.createReader();
-  reader.readEntries((entries) => {
-    const file = entries[0] as FileSystemFileEntry;
-    for (const entry in entries) {
-      console.log({ entry });
+async function getFileContents(d: FileSystemDirectoryHandle, fileName: string) {
+  const fileHandle = await d.getFileHandle(fileName, { create: true });
+  const file = await fileHandle.getFile();
+  return file.text();
+}
+
+function mapMediaToExercise(f: FileSystemFileHandle): ExerciseConfig {
+  return {
+    id: f.name,
+    fileName: f.name,
+    handle: f,
+    text: "",
+  };
+}
+
+function retrieveDirectoryImages(d: FileSystemDirectoryHandle) {
+  return getDirectoryContent(d, isImage) as Promise<FileSystemFileHandle[]>;
+}
+
+function createDirectoryConfig(
+  d: FileSystemDirectoryHandle,
+  imageHandles: FileSystemFileHandle[],
+): DirectoryConfiguration {
+  return {
+    folderName: d.name,
+    exercises: imageHandles.map(mapMediaToExercise),
+  };
+}
+
+function deserializeConfig(
+  config: DirectoryConfiguration,
+  media: FileSystemFileHandle[],
+): DirectoryConfiguration {
+  const filesToMatch = new Set(media.map((f) => f.name));
+  const reconciledExercises: ExerciseConfig[] = [];
+
+  for (const exercise of config.exercises) {
+    let copy = { ...exercise };
+    if (filesToMatch.has(exercise.fileName)) {
+      filesToMatch.delete(exercise.fileName);
+      exercise.handle = media.find((f) => f.name === exercise.fileName)!;
+    } else {
+      copy.error = "FILE_NOT_EXIST";
     }
-  });
+
+    reconciledExercises.push(exercise);
+  }
+
+  for (const fileName of filesToMatch) {
+    reconciledExercises.push({
+      handle: media.find((f) => f.name === fileName)!,
+      id: fileName,
+      fileName,
+      text: "",
+      error: "NOT_IN_CONFIG",
+    });
+  }
+
+  return {
+    ...config,
+    exercises: reconciledExercises,
+  };
+}
+
+const CONFIG_FILE = "config.json";
+export async function getDirectoryConfig(d: FileSystemDirectoryHandle) {
+  let configContent = {};
+  const directoryImages = await retrieveDirectoryImages(d);
+  try {
+    configContent = JSON.parse(await getFileContents(d, CONFIG_FILE));
+    configContent = deserializeConfig(
+      configContent as DirectoryConfiguration,
+      directoryImages,
+    );
+  } catch (e) {
+    configContent = createDirectoryConfig(d, directoryImages);
+    await writeDirectoryConfig(d, configContent as DirectoryConfiguration);
+  }
+
+  return configContent as DirectoryConfiguration;
+}
+
+export async function writeDirectoryConfig(
+  d: FileSystemDirectoryHandle,
+  config: DirectoryConfiguration,
+) {
+  return writeFileIntoDirectory(d, CONFIG_FILE, JSON.stringify(config));
 }

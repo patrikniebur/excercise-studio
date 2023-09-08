@@ -1,20 +1,42 @@
 import React from "react";
-import { Box, Card, CardBody, Flex, Image, Textarea } from "@chakra-ui/react";
+import {
+  Box,
+  Card,
+  CardBody,
+  Flex,
+  Image,
+  Textarea,
+  Text,
+} from "@chakra-ui/react";
 
-type Props = { file: FileSystemHandle; isDragging?: boolean };
+import { ExerciseConfig } from "../types";
+
+type Props = {
+  exercise: ExerciseConfig;
+  isDragging?: boolean;
+  onTextChange?: (text: string) => void;
+};
 
 export const ExerciseItem = React.forwardRef<HTMLDivElement, Props>(
-  ({ file, isDragging }, ref) => {
-    const url = useFileUrl(file);
+  ({ exercise, isDragging, onTextChange }, ref) => {
+    const url = useFileUrl(exercise.handle);
 
     return (
       <Card ref={ref} style={{ opacity: isDragging ? 0.5 : 1 }}>
         <CardBody>
           <Flex maxW="100%" overflow="hidden" gap="5">
             <Box flexBasis="30%">
-              <Image src={url} alt={file.name} height="auto" />
+              <Image src={url} alt={exercise.fileName} height="auto" />
             </Box>
-            <Textarea placeholder={file.name} />
+            {onTextChange ? (
+              <Textarea
+                placeholder={exercise.fileName}
+                onChange={(e) => onTextChange(e.target.value)}
+                value={exercise.text}
+              />
+            ) : (
+              <Text>{exercise.text}</Text>
+            )}
           </Flex>
         </CardBody>
       </Card>
