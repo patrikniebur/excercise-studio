@@ -10,6 +10,7 @@ import {
 import { GlobalContextProvider, useGlobalContext } from "../GlobalContext";
 import { Initialize } from "../Views/Initialize";
 import { Home } from "../Views/Home";
+import { ExerciseRunner } from "../Views/ExerciseRunner";
 
 const rootRoute = new RootRoute({
   component: () => {
@@ -28,7 +29,13 @@ const homeRoute = new Route({
   component: Home,
 });
 
-const routeTree = rootRoute.addChildren([homeRoute]);
+const runnerRoute = new Route({
+  getParentRoute: () => rootRoute,
+  path: 'exercise',
+  component: ExerciseRunner
+})
+
+const routeTree = rootRoute.addChildren([homeRoute, runnerRoute]);
 
 const router = new Router({ routeTree });
 

@@ -1,5 +1,6 @@
 import React from "react";
-import { Heading, Grid, Flex } from "@chakra-ui/react";
+import { Heading, Grid, Flex, Button } from "@chakra-ui/react";
+import { useNavigate } from "@tanstack/react-router";
 
 import type { DirectoryConfiguration, ExerciseConfig } from "../types";
 import { useGlobalContext } from "../GlobalContext";
@@ -15,6 +16,7 @@ export function Home() {
   const [orderedListing, setOrderedListing] = React.useState<ExerciseConfig[]>(
     [],
   );
+  const navigate = useNavigate();
 
   React.useEffect(() => {
     setOrderedListing(config?.exercises ?? []);
@@ -29,10 +31,10 @@ export function Home() {
   };
 
   const onTextChange = (item: ExerciseConfig, newText: string) => {
-    const exerciseIndex = config!.exercises.findIndex(e => e.id === item.id)
-    config!.exercises[exerciseIndex].text = newText
-    setConfig(config!)
-  }
+    const exerciseIndex = config!.exercises.findIndex((e) => e.id === item.id);
+    config!.exercises[exerciseIndex].text = newText;
+    setConfig(config!);
+  };
 
   return (
     <Flex
@@ -58,6 +60,7 @@ export function Home() {
           )}
         />
       </Grid>
+      <Button onClick={() => navigate({ to: "exercise" })}>Run Exercise</Button>
     </Flex>
   );
 }
