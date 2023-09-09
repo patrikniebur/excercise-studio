@@ -1,4 +1,4 @@
-import { DirectoryConfiguration, ExerciseConfig } from "../types";
+import { DirectoryConfiguration, ExerciseConfig, EXERCISE_ERROR } from "../types";
 
 async function getDirectoryContent(
   d: FileSystemDirectoryHandle,
@@ -98,12 +98,12 @@ function deserializeConfig(
     let copy = { ...exercise };
     if (filesToMatch.has(exercise.fileName)) {
       filesToMatch.delete(exercise.fileName);
-      exercise.handle = media.find((f) => f.name === exercise.fileName)!;
+      copy.handle = media.find((f) => f.name === exercise.fileName)!;
     } else {
-      copy.error = "FILE_NOT_EXIST";
+      copy.error = EXERCISE_ERROR.FILE_NOT_EXIST;
     }
 
-    reconciledExercises.push(exercise);
+    reconciledExercises.push(copy);
   }
 
   for (const fileName of filesToMatch) {
@@ -112,7 +112,7 @@ function deserializeConfig(
       id: fileName,
       fileName,
       text: "",
-      error: "NOT_IN_CONFIG",
+      error: EXERCISE_ERROR.NOT_IN_CONFIG,
     });
   }
 
@@ -144,5 +144,10 @@ export async function writeDirectoryConfig(
   d: FileSystemDirectoryHandle,
   config: DirectoryConfiguration,
 ) {
-  return writeFileIntoDirectory(d, CONFIG_FILE, JSON.stringify(config));
+  const saveConfig = {
+    ...config,
+    exercises: config.exercises.map(e => ({ ...e, error: undefined }))
+  }
+
+  return writeFileIntoDirectory(d, CONFIG_FILE, JSON.stringify(saveConfig));
 }

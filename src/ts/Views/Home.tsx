@@ -12,10 +12,11 @@ import {
 } from "../helpers/directoryFunctions";
 
 export function Home() {
-  const [config, setConfig] = useDirectoryConfiguration();
+  const [config, setConfig, refresh] = useDirectoryConfiguration();
   const [orderedListing, setOrderedListing] = React.useState<ExerciseConfig[]>(
     [],
   );
+  console.log({ config });
   const navigate = useNavigate();
 
   React.useEffect(() => {
@@ -33,8 +34,15 @@ export function Home() {
   const onTextChange = (item: ExerciseConfig, newText: string) => {
     const exerciseIndex = config!.exercises.findIndex((e) => e.id === item.id);
     config!.exercises[exerciseIndex].text = newText;
-    setConfig(config!);
+    setConfig({ ...config! });
   };
+
+  const onDelete = (item: ExerciseConfig) => {
+    setConfig({
+      ...config!,
+      exercises: config!.exercises.filter(e => e.id !== item.id)
+    })
+  }
 
   return (
     <Flex
@@ -46,6 +54,7 @@ export function Home() {
       gap="5"
     >
       <Heading as="h3">{config?.folderName}</Heading>
+      <Button onClick={refresh}>Refresh</Button>
       <Grid templateColumns="repeat(3, 1fr)" gap={5}>
         <Sortable
           items={orderedListing}
@@ -56,6 +65,7 @@ export function Home() {
               exercise={item}
               isDragging={isDragging}
               onTextChange={(newText) => onTextChange(item, newText)}
+              onDelete={() => onDelete(item)}
             />
           )}
         />
@@ -68,6 +78,7 @@ export function Home() {
 function useDirectoryConfiguration() {
   const ctx = useGlobalContext();
   const [config, setConfig] = React.useState<DirectoryConfiguration>();
+  const [refreshToken, setRefreshToken] = React.useState(0);
 
   React.useEffect(() => {
     if (!ctx.mainDirectoryHandle) {
@@ -75,7 +86,7 @@ function useDirectoryConfiguration() {
     }
 
     getDirectoryConfig(ctx.mainDirectoryHandle).then(setConfig);
-  }, [ctx.mainDirectoryHandle]);
+  }, [ctx.mainDirectoryHandle, refreshToken]);
 
   const updateConfig = (configUpdate: DirectoryConfiguration) => {
     if (!ctx.mainDirectoryHandle) {
@@ -86,5 +97,9 @@ function useDirectoryConfiguration() {
     setConfig(configUpdate);
   };
 
-  return [config, updateConfig] as const;
+  const refresh = () => {
+    setRefreshToken((x) => x + 1);
+  };
+
+  return [config, updateConfig, refresh] as const;
 }
