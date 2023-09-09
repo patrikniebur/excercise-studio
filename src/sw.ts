@@ -7,16 +7,16 @@ declare const self: ServiceWorkerGlobalScope;
 import { MessageToSW, MessageFromSW } from "./ts/helpers/serviceWorkerTools";
 import { storeHandle, getHandle } from "./ts/helpers/storage";
 
-const DEBUG = true
+const DEBUG = true;
 
-function debug(message:unknown) {
+function debug(message: unknown) {
   if (DEBUG) {
-    console.log(message)
+    console.log(message);
   }
 }
 
 const runtimeStorage = {
-  handle: undefined as FileSystemDirectoryHandle | undefined,
+  handles: [] as FileSystemDirectoryHandle[],
 };
 
 self.addEventListener("activate", () => {
@@ -26,23 +26,30 @@ self.addEventListener("activate", () => {
 
 self.addEventListener("message", async (e) => {
   const message = e.data as MessageToSW;
-  const response = await getActionAndResponse(message)
-  debug({ received: message, response })
+  const response = await getActionAndResponse(message);
+  debug({ received: message, response });
   if (response) {
-    e.source?.postMessage(response)
+    e.source?.postMessage(response);
   }
 });
 
-async function getActionAndResponse(query: MessageToSW): Promise<MessageFromSW | undefined> {
+async function getActionAndResponse(
+  query: MessageToSW,
+): Promise<MessageFromSW | undefined> {
   switch (query.type) {
     case "StoreFSHandle":
-      runtimeStorage.handle = query.data;
-      storeHandle(query.data)
+      const handleMatches = await Promise.all(
+        runtimeStorage.handles.map((h) => h.isSameEntry(query.data)),
+      );
+      if (handleMatches.includes(true) === false) {
+        runtimeStorage.handles.push(query.data);
+        storeHandle(runtimeStorage.handles);
+      }
       return;
-    case "RequestFSHandle":
-      const handle = runtimeStorage.handle || await getHandle()
-      if (handle) {
-        return { type: "FSHandle", data: handle };
+    case "RequestFSHandles":
+      runtimeStorage.handles = (await getHandle()) ?? [];
+      if (runtimeStorage.handles.length > 0) {
+        return { type: "FSHandles", data: runtimeStorage.handles };
       }
       return;
   }

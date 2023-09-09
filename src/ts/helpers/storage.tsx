@@ -7,12 +7,12 @@ localforage.config({
   version: 1.0,
 });
 
-const FS_KEY = "DIRECTORY_HANDLE";
+const FS_KEY = "DIRECTORY_HANDLES";
 
-export function storeHandle(d: FileSystemDirectoryHandle) {
+export function storeHandle(d: FileSystemDirectoryHandle[]) {
   localforage.setItem(FS_KEY, d);
 }
 
 export function getHandle() {
-  return localforage.getItem<FileSystemDirectoryHandle>(FS_KEY)
+  return localforage.getItem<FileSystemDirectoryHandle[]>(FS_KEY)
 }

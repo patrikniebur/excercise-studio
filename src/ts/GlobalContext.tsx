@@ -5,11 +5,15 @@ import { sendMessage } from "./helpers/serviceWorkerTools";
 type Context = {
   mainDirectoryHandle?: FileSystemDirectoryHandle;
   saveDirectoryHandle: (d: FileSystemDirectoryHandle) => void;
+  clearDirectoryHandle: () => void;
   isInitialized: () => boolean;
 };
 
+const noop = () => {}
+
 const GlobaContext = React.createContext<Context>({
-  saveDirectoryHandle: () => {},
+  saveDirectoryHandle: noop,
+  clearDirectoryHandle: noop,
   isInitialized: () => false,
 });
 
@@ -25,11 +29,16 @@ export function GlobalContextProvider({ children }: React.PropsWithChildren) {
     setHandle(data);
   };
 
+  const clearDirectoryHandle = () => {
+    setHandle(undefined)
+  }
+
   return (
     <GlobaContext.Provider
       value={{
         mainDirectoryHandle: handle,
         saveDirectoryHandle,
+        clearDirectoryHandle,
         isInitialized,
       }}
     >

@@ -1,5 +1,12 @@
 import React from "react";
-import { Heading, Grid, Flex, Button } from "@chakra-ui/react";
+import {
+  Heading,
+  Grid,
+  Flex,
+  Button,
+  ButtonGroup,
+  Text,
+} from "@chakra-ui/react";
 import { useNavigate } from "@tanstack/react-router";
 
 import type { DirectoryConfiguration, ExerciseConfig } from "../types";
@@ -12,6 +19,7 @@ import {
 } from "../helpers/directoryFunctions";
 
 export function Home() {
+  const { clearDirectoryHandle } = useGlobalContext();
   const [config, setConfig, refresh] = useDirectoryConfiguration();
   const [orderedListing, setOrderedListing] = React.useState<ExerciseConfig[]>(
     [],
@@ -40,9 +48,11 @@ export function Home() {
   const onDelete = (item: ExerciseConfig) => {
     setConfig({
       ...config!,
-      exercises: config!.exercises.filter(e => e.id !== item.id)
-    })
-  }
+      exercises: config!.exercises.filter((e) => e.id !== item.id),
+    });
+  };
+
+  const emptyFolder = (config?.exercises.length ?? 0) === 0;
 
   return (
     <Flex
@@ -54,23 +64,36 @@ export function Home() {
       gap="5"
     >
       <Heading as="h3">{config?.folderName}</Heading>
-      <Button onClick={refresh}>Refresh</Button>
-      <Grid templateColumns="repeat(3, 1fr)" gap={5}>
-        <Sortable
-          items={orderedListing}
-          onReorder={onReorder}
-          render={(item, ref, { isDragging }) => (
-            <ExerciseItem
-              ref={ref}
-              exercise={item}
-              isDragging={isDragging}
-              onTextChange={(newText) => onTextChange(item, newText)}
-              onDelete={() => onDelete(item)}
+      <ButtonGroup spacing="5">
+        <Button onClick={refresh}>Refresh</Button>
+        <Button colorScheme="purple" onClick={clearDirectoryHandle}>
+          Change folder
+        </Button>
+      </ButtonGroup>
+      {emptyFolder ? (
+        <Text>Add some media files into the folder to setup exercises</Text>
+      ) : (
+        <>
+          <Grid templateColumns="repeat(3, 1fr)" gap={5}>
+            <Sortable
+              items={orderedListing}
+              onReorder={onReorder}
+              render={(item, ref, { isDragging }) => (
+                <ExerciseItem
+                  ref={ref}
+                  exercise={item}
+                  isDragging={isDragging}
+                  onTextChange={(newText) => onTextChange(item, newText)}
+                  onDelete={() => onDelete(item)}
+                />
+              )}
             />
-          )}
-        />
-      </Grid>
-      <Button onClick={() => navigate({ to: "exercise" })}>Run Exercise</Button>
+          </Grid>
+          <Button onClick={() => navigate({ to: "exercise" })}>
+            Run Exercise
+          </Button>
+        </>
+      )}
     </Flex>
   );
 }

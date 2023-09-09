@@ -3,11 +3,11 @@ import React from "react";
 export type MessageToSW = {
   type: "StoreFSHandle";
   data: FileSystemDirectoryHandle;
-} | { type: "RequestFSHandle" };
+} | { type: "RequestFSHandles" };
 
 export type MessageFromSW = {
-  type: "FSHandle";
-  data: FileSystemDirectoryHandle;
+  type: "FSHandles";
+  data: FileSystemDirectoryHandle[];
 };
 
 export function registerSW() {
