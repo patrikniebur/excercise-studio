@@ -10,7 +10,7 @@ export function VoiceControlledTimer() {
     "stop",
     "reset",
     "pause",
-    "pose" /* pose - catches misunderstood pause */,
+    "pose", "post", /* match falesly recognized 'pauze' */
   ]);
 
   React.useEffect(() => {

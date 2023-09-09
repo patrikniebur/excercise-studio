@@ -8,6 +8,7 @@ import { registerSW } from './helpers/serviceWorkerTools'
 
 registerSW()
 const app = document.createElement("div");
+app.setAttribute('style', 'height: 100%')
 
 document.body.appendChild(app);
 

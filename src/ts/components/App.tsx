@@ -14,12 +14,8 @@ import { ExerciseRunner } from "../Views/ExerciseRunner";
 
 const rootRoute = new RootRoute({
   component: () => {
-    const { isInitialized } = useGlobalContext()
-    return (
-      <>
-        {isInitialized() ? <Outlet /> : <Initialize />}
-      </>
-    );
+    const { isInitialized } = useGlobalContext();
+    return <>{isInitialized() ? <Outlet /> : <Initialize />}</>;
   },
 });
 
@@ -31,9 +27,9 @@ const homeRoute = new Route({
 
 const runnerRoute = new Route({
   getParentRoute: () => rootRoute,
-  path: 'exercise',
-  component: ExerciseRunner
-})
+  path: "exercise",
+  component: ExerciseRunner,
+});
 
 const routeTree = rootRoute.addChildren([homeRoute, runnerRoute]);
 
@@ -46,6 +42,10 @@ declare module "@tanstack/react-router" {
 }
 
 const theme = extendTheme({
+  config: {
+    initialColorMode: 'dark',
+    useSystemColorMode: false,
+  },
   styles: {
     global: {
       "html, body, #app": {
@@ -53,10 +53,10 @@ const theme = extendTheme({
         margin: 0,
         padding: 0,
       },
-      body: {
-        backgroundColor: "#1f1711",
-        color: "#eeeeee",
-      },
+      // body: {
+      //   backgroundColor: "#1f1711",
+      //   color: "#eeeeee",
+      // },
     },
   },
 });
@@ -64,9 +64,9 @@ const theme = extendTheme({
 export function App() {
   return (
     <GlobalContextProvider>
-      <ChakraProvider theme={theme}>
-        <RouterProvider router={router} />
-      </ChakraProvider>
+        <ChakraProvider theme={theme}>
+          <RouterProvider router={router} />
+        </ChakraProvider>
     </GlobalContextProvider>
   );
 }

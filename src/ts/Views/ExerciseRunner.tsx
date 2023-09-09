@@ -1,5 +1,6 @@
 import React from "react";
-import { Heading, Flex, Button, Box } from "@chakra-ui/react";
+import { Heading, Flex, Button, Box, ButtonProps } from "@chakra-ui/react";
+import { Link } from "@tanstack/react-router";
 
 import type { DirectoryConfiguration } from "../types";
 import { useGlobalContext } from "../GlobalContext";
@@ -21,8 +22,8 @@ export function ExerciseRunner() {
   const isFirst = currentExerciseIndex === 0;
   const isLast = currentExerciseIndex + 1 === (config?.exercises?.length ?? 0);
 
-  const prev = () => setCurrentExerciseIndex((i) => isFirst ? i : i - 1 );
-  const next = () => setCurrentExerciseIndex((i) => isLast ? i : i + 1);
+  const prev = () => setCurrentExerciseIndex((i) => (isFirst ? i : i - 1));
+  const next = () => setCurrentExerciseIndex((i) => (isLast ? i : i + 1));
 
   React.useEffect(() => {
     if (["back", "previous"].includes(lastCommand)) {
@@ -37,8 +38,12 @@ export function ExerciseRunner() {
   }, [lastCommand]);
 
   const currentExercise = config?.exercises[currentExerciseIndex];
-  console.log({currentExerciseIndex})
 
+  const arrowProps: ButtonProps = {
+    pos: "absolute",
+    bottom: "10",
+    size: "lg",
+  };
 
   return (
     <Flex
@@ -48,14 +53,38 @@ export function ExerciseRunner() {
       flexDirection="column"
       alignItems="center"
       gap="5"
+      padding="10"
     >
-      <Heading as="h3">{config?.folderName}</Heading>
-      {currentExercise && <ExerciseItem exercise={currentExercise} />}
-      <Box>
-        {isFirst === false && <Button onClick={prev}>&lt;</Button>}
-        {isLast === false && <Button onClick={next}>&gt;</Button>}
+      <Box width="100%">
+        <Link style={{ float: "right" }} to="/">
+          Back to editor
+        </Link>
+        <Heading as="h3" textAlign="center">
+          {config?.folderName}
+        </Heading>
       </Box>
-      <VoiceControlledTimer />
+
+      {currentExercise && <ExerciseItem exercise={currentExercise} />}
+      <Box position="absolute" left="10" right="10" bottom="0">
+        {isFirst === false && (
+          <Button {...arrowProps} left="0" onClick={prev}>
+            &lt;
+          </Button>
+        )}
+        {isLast === false && (
+          <Button {...arrowProps} right="0" onClick={next}>
+            &gt;
+          </Button>
+        )}
+      </Box>
+      <Box
+        position="absolute"
+        bottom="5"
+        background="gray.600"
+        borderRadius="full"
+      >
+        <VoiceControlledTimer />
+      </Box>
     </Flex>
   );
 }

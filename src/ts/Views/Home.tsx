@@ -46,7 +46,7 @@ export function Home() {
       gap="5"
     >
       <Heading as="h3">{config?.folderName}</Heading>
-      <Grid templateColumns="repeat(3, 1fr)" gap={6}>
+      <Grid templateColumns="repeat(3, 1fr)" gap={5}>
         <Sortable
           items={orderedListing}
           onReorder={onReorder}
