@@ -3,13 +3,16 @@ import {
   Box,
   Card,
   CardBody,
+  Menu,
+  MenuItem,
   Flex,
   Image,
   Textarea,
   Text,
-  CardProps,
   Badge,
   Button,
+  MenuButton,
+  MenuList,
 } from "@chakra-ui/react";
 
 import { ExerciseConfig, EXERCISE_ERROR } from "../types";
@@ -27,15 +30,10 @@ export const ExerciseItem = React.forwardRef<HTMLDivElement, Props>(
 
     const isEdit = onTextChange ? true : false;
 
-    const styleProps: CardProps = isEdit
-      ? {}
-      : {
-          width: "100%",
-          height: "100%",
-        };
+
 
     return (
-      <Card ref={ref} opacity={isDragging ? 0.5 : 1} {...styleProps}>
+      <Card ref={ref} opacity={isDragging ? 0.5 : 1} w="100%" h="100%" pos="relative">
         {exercise.error === EXERCISE_ERROR.NOT_IN_CONFIG && (
           <Badge colorScheme="green">NEW</Badge>
         )}
@@ -54,7 +52,6 @@ export const ExerciseItem = React.forwardRef<HTMLDivElement, Props>(
                     File <Text as="code">{exercise.fileName}</Text> has not been
                     found
                   </Text>
-                  { onDelete && <Button onClick={onDelete}>Delete</Button> }
                 </>
               ) : (
                 <Image
@@ -75,6 +72,12 @@ export const ExerciseItem = React.forwardRef<HTMLDivElement, Props>(
             ) : (
               <Text fontSize="5xl">{exercise.text}</Text>
             )}
+            { onDelete && <Menu size="xs" variant="ghost" >
+              <MenuButton pos="absolute" right="0" top="0" size="xs" as={Button}>...</MenuButton>
+              <MenuList>
+                <MenuItem onClick={onDelete}>Delete</MenuItem>
+              </MenuList>
+            </Menu> }
           </Flex>
         </CardBody>
       </Card>

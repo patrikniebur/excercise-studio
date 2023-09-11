@@ -16,6 +16,7 @@ import { Sortable } from "../components/Sortable/Sortable";
 import {
   getDirectoryConfig,
   writeDirectoryConfig,
+  deleteFile,
 } from "../helpers/directoryFunctions";
 
 export function Home() {
@@ -24,7 +25,6 @@ export function Home() {
   const [orderedListing, setOrderedListing] = React.useState<ExerciseConfig[]>(
     [],
   );
-  console.log({ config });
   const navigate = useNavigate();
 
   React.useEffect(() => {
@@ -50,6 +50,9 @@ export function Home() {
       ...config!,
       exercises: config!.exercises.filter((e) => e.id !== item.id),
     });
+    if (item.handle instanceof FileSystemFileHandle) {
+      deleteFile(item.handle);
+    }
   };
 
   const emptyFolder = (config?.exercises.length ?? 0) === 0;

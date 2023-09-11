@@ -45,7 +45,7 @@ export async function retrieveDirectoryHandle() {
   }
 }
 
-export async function writeFileIntoDirectory(
+async function writeFileIntoDirectory(
   d: FileSystemDirectoryHandle,
   fileName: string,
   content: string,
@@ -120,6 +120,11 @@ function deserializeConfig(
     ...config,
     exercises: reconciledExercises,
   };
+}
+
+export function deleteFile(f: FileSystemFileHandle): Promise<void> {
+  /* @ts-ignore */
+  return f.remove()
 }
 
 const CONFIG_FILE = "config.json";
