@@ -1,5 +1,6 @@
 import {
   Button,
+  Text,
   Center,
   Heading,
   Stack,
@@ -9,7 +10,10 @@ import {
 } from "@chakra-ui/react";
 
 import { useGlobalContext } from "../GlobalContext";
-import { retrieveDirectoryHandle } from "../helpers/directoryFunctions";
+import {
+  retrieveDirectoryHandle,
+  hasSupport,
+} from "../helpers/directoryFunctions";
 import { sendMessage, useListenToSW } from "../helpers/serviceWorkerTools";
 import React from "react";
 
@@ -25,7 +29,7 @@ export function Initialize() {
       description: "I cannot continue reading the folder, try again?",
       duration: 3000,
     });
-  }
+  };
 
   const onClick = async () => {
     try {
@@ -39,15 +43,15 @@ export function Initialize() {
   const onFolderSelect = async (handle: FileSystemDirectoryHandle) => {
     try {
       // @ts-ignore - untyped requestPermission
-      await handle.requestPermission()
-      saveDirectoryHandle(handle)
-    } catch(e) {
-      showFolderError()
+      await handle.requestPermission();
+      saveDirectoryHandle(handle);
+    } catch (e) {
+      showFolderError();
     }
-  }
+  };
 
-  return (
-    <Center w="100%" h="100%" flexDirection="column">
+  const body = (
+    <>
       <Heading m="5">Start here</Heading>
       <Stack align="center">
         <Button colorScheme="blue" variant="solid" onClick={onClick}>
@@ -67,6 +71,19 @@ export function Initialize() {
           ))}
         </ButtonGroup>
       </Stack>
+    </>
+  );
+
+  return (
+    <Center w="100%" h="100%" flexDirection="column">
+      {hasSupport() ? (
+        body
+      ) : (
+        <Text>
+          Unfortunately your browser does not support APIs this experimental app is based on. Please use latest chrome
+          if you want to try the app.
+        </Text>
+      )}
     </Center>
   );
 }

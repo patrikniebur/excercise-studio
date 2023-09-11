@@ -1,5 +1,9 @@
 import { DirectoryConfiguration, ExerciseConfig, EXERCISE_ERROR } from "../types";
 
+export function hasSupport() {
+  return "showDirectoryPicker" in window
+}
+
 async function getDirectoryContent(
   d: FileSystemDirectoryHandle,
   predicate: (f: FileSystemHandle) => Promise<boolean> | boolean = () => true,
