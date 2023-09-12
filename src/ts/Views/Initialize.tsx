@@ -55,7 +55,7 @@ export function Initialize() {
     <>
       <Heading m="5">Start here</Heading>
       <Stack align="center">
-        <ButtonGroup>
+        <ButtonGroup mb="5">
           <Button colorScheme="blue" variant="solid" onClick={onClick}>
             Enable folder access
           </Button>
@@ -65,6 +65,11 @@ export function Initialize() {
             </Button>
           )}
         </ButtonGroup>
+        {handles.length > 0 && (
+          <Heading as="h2" size="md">
+            Previously opened folders
+          </Heading>
+        )}
         <ButtonGroup>
           {handles.map(([handle, permission]) => (
             <Button key={handle.name} onClick={() => onFolderSelect(handle)}>
