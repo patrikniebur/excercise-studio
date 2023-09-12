@@ -18,6 +18,7 @@ import { sendMessage, useListenToSW } from "../helpers/serviceWorkerTools";
 import React from "react";
 
 export function Initialize() {
+  const [isInstallable, install] = useIsInstallable();
   const { saveDirectoryHandle } = useGlobalContext();
   const handles = useSWHandle();
   const toast = useToast();
@@ -54,9 +55,16 @@ export function Initialize() {
     <>
       <Heading m="5">Start here</Heading>
       <Stack align="center">
-        <Button colorScheme="blue" variant="solid" onClick={onClick}>
-          Enable folder access
-        </Button>
+        <ButtonGroup>
+          <Button colorScheme="blue" variant="solid" onClick={onClick}>
+            Enable folder access
+          </Button>
+          {isInstallable && (
+            <Button colorScheme="purple" onClick={install}>
+              Install app
+            </Button>
+          )}
+        </ButtonGroup>
         <ButtonGroup>
           {handles.map(([handle, permission]) => (
             <Button key={handle.name} onClick={() => onFolderSelect(handle)}>
@@ -80,8 +88,8 @@ export function Initialize() {
         body
       ) : (
         <Text>
-          Unfortunately your browser does not support APIs this experimental app is based on. Please use latest chrome
-          if you want to try the app.
+          Unfortunately your browser does not support APIs this experimental app
+          is based on. Please use latest chrome if you want to try the app.
         </Text>
       )}
     </Center>
@@ -117,4 +125,27 @@ function useSWHandle() {
   }, [message]);
 
   return handles;
+}
+
+function useIsInstallable() {
+  const prompt = React.useRef<{ prompt: Function }>();
+  const [installable, setInstallable] = React.useState(false);
+
+  React.useEffect(() => {
+    const listener = (e: Event) => {
+      e.preventDefault();
+      setInstallable(true);
+      // @ts-ignore missing typings for event
+      prompt.current = e;
+    };
+    window.addEventListener("beforeinstallprompt", listener);
+
+    return () => window.removeEventListener("beforeinstallprompt", listener);
+  }, []);
+
+  const promptInstall = () => {
+    prompt.current?.prompt();
+  };
+
+  return [installable, promptInstall] as const;
 }

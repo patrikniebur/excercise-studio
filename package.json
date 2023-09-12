@@ -10,6 +10,8 @@
   "license": "ISC",
   "devDependencies": {
     "@babel/core": "^7.22.11",
+    "@parcel/packager-raw-url": "^2.9.3",
+    "@parcel/transformer-webmanifest": "^2.9.3",
     "@tanstack/router-devtools": "^0.0.1-beta.171",
     "@types/dom-speech-recognition": "^0.0.1",
     "@types/react": "^18.2.21",
