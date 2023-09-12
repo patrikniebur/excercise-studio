@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@chakra-ui/react": "^2.8.0",
+    "@parcel/service-worker": "^2.9.3",
     "@tanstack/react-router": "^0.0.1-beta.171",
     "localforage": "^1.10.0",
     "react": "^18.2.0",
