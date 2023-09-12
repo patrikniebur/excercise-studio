@@ -8,7 +8,8 @@ import { manifest, version } from "@parcel/service-worker";
 import { MessageToSW, MessageFromSW } from "./ts/helpers/serviceWorkerTools";
 import { storeHandle, getHandle } from "./ts/helpers/storage";
 
-const DEBUG = true;
+// @ts-ignore
+const DEBUG = process.env.NODE_ENV === "development";
 
 function debug(...message: unknown[]) {
   if (DEBUG) {
