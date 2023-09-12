@@ -23,6 +23,9 @@ const runtimeStorage = {
 
 /* MAKE STUFF AVAILABLE OFFLINE */
 async function installCaches() {
+  if (DEBUG === true) {
+    return;
+  }
   const cache = await caches.open(version);
   debug({ manifest });
   await cache.addAll(manifest);
@@ -40,17 +43,17 @@ async function activate() {
 self.addEventListener("activate", (e) => e.waitUntil(activate()));
 
 self.addEventListener("fetch", function (event) {
+  const runFetch = (cache?: Cache) =>
+    fetch(event.request).then(function (response) {
+      cache?.put(event.request, response.clone());
+      return response;
+    });
+
   event.respondWith(
     caches.open(version).then(function (cache) {
       return cache.match(event.request).then(function (response) {
         debug("Network", { response, request: event.request });
-        return (
-          response ||
-          fetch(event.request).then(function (response) {
-            cache.put(event.request, response.clone());
-            return response;
-          })
-        );
+        return DEBUG ? runFetch() : response || runFetch(cache);
       });
     }),
   );
