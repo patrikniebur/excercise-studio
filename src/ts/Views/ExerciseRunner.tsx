@@ -15,6 +15,7 @@ import { ExerciseItem } from "../components/ExerciseItem";
 import { getDirectoryConfig } from "../helpers/directoryFunctions";
 import { useVoiceCommands, useKeyboardControls } from "../helpers/hooks";
 import { VoiceControlledTimer } from "../components/Timer/VoiceControlledTimer";
+import { ControlsModal } from "../components/ControlsModal";
 
 export function ExerciseRunner() {
   useKeyboardControls({ ArrowLeft: prev, ArrowRight: next });
@@ -68,6 +69,7 @@ export function ExerciseRunner() {
       padding="10"
     >
       <Box width="100%">
+        <ControlsModal />
         <Link style={{ float: "right" }} to="/">
           Back to editor
         </Link>
