@@ -13,10 +13,11 @@ import type { DirectoryConfiguration } from "../types";
 import { useGlobalContext } from "../GlobalContext";
 import { ExerciseItem } from "../components/ExerciseItem";
 import { getDirectoryConfig } from "../helpers/directoryFunctions";
-import { useVoiceCommands } from "../helpers/hooks";
+import { useVoiceCommands, useKeyboardControls } from "../helpers/hooks";
 import { VoiceControlledTimer } from "../components/Timer/VoiceControlledTimer";
 
 export function ExerciseRunner() {
+  useKeyboardControls({ ArrowLeft: prev, ArrowRight: next });
   const [config] = useDirectoryConfiguration();
   const [currentExerciseIndex, setCurrentExerciseIndex] = React.useState(0);
   const [lastCommand, resetLastCommand] = useVoiceCommands([
@@ -29,8 +30,12 @@ export function ExerciseRunner() {
   const isFirst = currentExerciseIndex === 0;
   const isLast = currentExerciseIndex + 1 === (config?.exercises?.length ?? 0);
 
-  const prev = () => setCurrentExerciseIndex((i) => (isFirst ? i : i - 1));
-  const next = () => setCurrentExerciseIndex((i) => (isLast ? i : i + 1));
+  function prev() {
+    setCurrentExerciseIndex((i) => (isFirst ? i : i - 1));
+  }
+  function next() {
+    setCurrentExerciseIndex((i) => (isLast ? i : i + 1));
+  }
 
   React.useEffect(() => {
     if (["back", "previous"].includes(lastCommand)) {
