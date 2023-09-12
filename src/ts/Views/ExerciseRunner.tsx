@@ -17,6 +17,9 @@ import { useVoiceCommands, useKeyboardControls } from "../helpers/hooks";
 import { VoiceControlledTimer } from "../components/Timer/VoiceControlledTimer";
 import { ControlsModal } from "../components/ControlsModal";
 
+// @ts-ignore
+const BASE_PATH = process.env.BASE_PATH;
+
 export function ExerciseRunner() {
   useKeyboardControls({ ArrowLeft: prev, ArrowRight: next });
   const [config] = useDirectoryConfiguration();
@@ -70,7 +73,7 @@ export function ExerciseRunner() {
     >
       <Box width="100%">
         <ControlsModal />
-        <Link style={{ float: "right" }} to="/">
+        <Link style={{ float: "right" }} to={BASE_PATH}>
           Back to editor
         </Link>
         <Heading as="h3" textAlign="center" mb="3">

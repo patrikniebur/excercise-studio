@@ -19,15 +19,18 @@ const rootRoute = new RootRoute({
   },
 });
 
+// @ts-ignore
+const BASE_PATH = process.env.BASE_PATH;
+
 const homeRoute = new Route({
   getParentRoute: () => rootRoute,
-  path: "/",
+  path: BASE_PATH,
   component: Home,
 });
 
 const runnerRoute = new Route({
   getParentRoute: () => rootRoute,
-  path: "exercise",
+  path: BASE_PATH + "/exercise",
   component: ExerciseRunner,
 });
 
@@ -43,7 +46,7 @@ declare module "@tanstack/react-router" {
 
 const theme = extendTheme({
   config: {
-    initialColorMode: 'dark',
+    initialColorMode: "dark",
     useSystemColorMode: false,
   },
   styles: {
@@ -64,9 +67,9 @@ const theme = extendTheme({
 export function App() {
   return (
     <GlobalContextProvider>
-        <ChakraProvider theme={theme}>
-          <RouterProvider router={router} />
-        </ChakraProvider>
+      <ChakraProvider theme={theme}>
+        <RouterProvider router={router} />
+      </ChakraProvider>
     </GlobalContextProvider>
   );
 }

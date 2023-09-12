@@ -25,6 +25,7 @@ jobs:
 
     - name: Build
       run: |
+        echo "Using Base path: $BASE_PATH"
         npm install
         npm run build
 
