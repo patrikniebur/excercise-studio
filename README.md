@@ -1,13 +1,10 @@
-## Voice controlled timer  
-[Live demo](https://patrikniebur.github.io/voice-controlled-timer/)
+## Exercise studio 
+[Live demo](https://patrikniebur.github.io/exercise-studio/)
 
-Requires [`SpeechRecognition` API](https://developer.mozilla.org/en-US/docs/Web/API/SpeechRecognition) which currently appears to work only in latest Chrome `v116`.  
+Experiment using [`SpeechRecognition` API](https://developer.mozilla.org/en-US/docs/Web/API/SpeechRecognition) (which currently appears to work only in latest Chrome `v116`) and [`FileSystem` API](https://developer.mozilla.org/en-US/docs/Web/API/File_System_API).  
 
-Recognizes 4 commands:  
-- `start` - To start the timer  
-- `pause` - Pausing the timer at the current time which can be started again  
-- `stop` - Stops and resets the timer  
-- `reset` - Same as stop  
+Purpose of the app is to organise exercise routine from the images of exercises in your local file system. After giving browser access to the folder it will read the images, allow you to add text instructions, reorder them using drag and drop and then run the exercise routing which can be controlled by voice. To see what voice commands work click the `?` button in the top left corner of the exercise routine screen or see the image below:  
+<img src="./controls.png" alt="Screenshot with supported voice and keyboard commands" />
 
 ### Development  
 **Requirements**  
