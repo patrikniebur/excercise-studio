@@ -1,5 +1,12 @@
 import React from "react";
-import { Heading, Flex, Button, Box, ButtonProps } from "@chakra-ui/react";
+import {
+  Heading,
+  Flex,
+  Button,
+  Box,
+  ButtonProps,
+  Progress,
+} from "@chakra-ui/react";
 import { Link } from "@tanstack/react-router";
 
 import type { DirectoryConfiguration } from "../types";
@@ -59,12 +66,25 @@ export function ExerciseRunner() {
         <Link style={{ float: "right" }} to="/">
           Back to editor
         </Link>
-        <Heading as="h3" textAlign="center">
+        <Heading as="h3" textAlign="center" mb="3">
           {config?.folderName}
         </Heading>
       </Box>
-
-      {currentExercise && <ExerciseItem exercise={currentExercise} />}
+      {currentExercise && (
+        <Box w="100%" h="100%" pos="relative">
+          <Progress
+            pos="absolute"
+            w="100%"
+            zIndex="banner"
+            max={config?.exercises.length}
+            min={1}
+            value={currentExerciseIndex + 1}
+            mb="1"
+            borderRadius="5"
+          />
+          <ExerciseItem exercise={currentExercise} />
+        </Box>
+      )}
       <Box position="absolute" left="10" right="10" bottom="0">
         {isFirst === false && (
           <Button {...arrowProps} left="0" onClick={prev}>
@@ -79,7 +99,7 @@ export function ExerciseRunner() {
       </Box>
       <Box
         position="absolute"
-        bottom="5"
+        bottom="2"
         background="gray.600"
         borderRadius="full"
       >
