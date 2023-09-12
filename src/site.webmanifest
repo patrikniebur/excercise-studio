@@ -3,8 +3,8 @@
   "description": "Little experiment with browser APIs - Studio to build up your exercise routine and navigate it easily while you exercise",
   "theme_color": "#1A202C",
   "background_color": "#1A202C",
-  "id": "https://patrikniebur.github.io/exercise-studio/index.html",
-  "start_url": "https://patrikniebur.github.io/exercise-studio/index.html",
+  "id": "https://patrikniebur.github.io/exercise-studio/",
+  "start_url": "https://patrikniebur.github.io/exercise-studio/",
   "display": "standalone",
   "icons": [
     {
