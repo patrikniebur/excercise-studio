@@ -30,8 +30,6 @@ export const ExerciseItem = React.forwardRef<HTMLDivElement, Props>(
 
     const isEdit = onTextChange ? true : false;
 
-
-
     return (
       <Card ref={ref} opacity={isDragging ? 0.5 : 1} w="100%" h="100%" pos="relative">
         {exercise.error === EXERCISE_ERROR.NOT_IN_CONFIG && (
@@ -63,16 +61,16 @@ export const ExerciseItem = React.forwardRef<HTMLDivElement, Props>(
                 />
               )}
             </Box>
-            {onTextChange ? (
+            {isEdit && onTextChange ? (
               <Textarea
                 placeholder={exercise.fileName}
                 onChange={(e) => onTextChange(e.target.value)}
                 value={exercise.text}
               />
             ) : (
-              <Text fontSize="5xl">{exercise.text}</Text>
+              <Text fontSize="5xl" whiteSpace="pre-line">{exercise.text}</Text>
             )}
-            { onDelete && <Menu size="xs" variant="ghost" >
+            { isEdit && onDelete && <Menu size="xs" variant="ghost" >
               <MenuButton pos="absolute" right="0" top="0" size="xs" as={Button}>...</MenuButton>
               <MenuList>
                 <MenuItem onClick={onDelete}>Delete</MenuItem>
