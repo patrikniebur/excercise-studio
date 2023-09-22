@@ -13,7 +13,7 @@ import type { DirectoryConfiguration } from "../types";
 import { useGlobalContext } from "../GlobalContext";
 import { ExerciseItem } from "../components/ExerciseItem";
 import { getDirectoryConfig } from "../helpers/directoryFunctions";
-import { useVoiceCommands, useKeyboardControls } from "../helpers/hooks";
+import { useVoiceCommands, useKeyboardControls, useRefreshingWakeLock } from "../helpers/hooks";
 import { VoiceControlledTimer } from "../components/Timer/VoiceControlledTimer";
 import { ControlsModal } from "../components/ControlsModal";
 
@@ -23,6 +23,7 @@ const BASE_PATH = process.env.BASE_PATH;
 export function ExerciseRunner() {
   useKeyboardControls({ ArrowLeft: prev, ArrowRight: next });
   const [config] = useDirectoryConfiguration();
+  useRefreshingWakeLock()
   const [currentExerciseIndex, setCurrentExerciseIndex] = React.useState(0);
   const [lastCommand, resetLastCommand] = useVoiceCommands([
     "next",

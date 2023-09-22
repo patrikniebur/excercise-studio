@@ -32,6 +32,7 @@
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^18.2.0",
+    "react-screen-wake-lock": "^3.0.2",
     "react-speech-recognition": "^3.10.0"
   },
   "@parcel/transformer-css": {

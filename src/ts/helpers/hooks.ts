@@ -2,6 +2,7 @@ import React from "react";
 import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
+import { useWakeLock } from "react-screen-wake-lock";
 
 export function useVoiceCommands(command: string[]) {
   const [lastCommand, setLastCommand] = React.useState("");
@@ -51,12 +52,56 @@ export function useKeyboardControls(
     const listener = (e: KeyboardEvent) => {
       const callback = listeners[e.code];
       if (callback) {
-        e.preventDefault()
-        callback()
+        e.preventDefault();
+        callback();
       }
     };
     window.addEventListener("keydown", listener);
 
     return () => window.removeEventListener("keydown", listener);
   }, [listeners]);
+}
+
+export function useRefreshingWakeLock() {
+  const locked = React.useRef(false);
+  const { request, release } = useWakeLock({
+    onRelease: () => {
+      locked.current = false;
+    },
+  });
+
+  const lock = () => {
+    if (locked.current !== true) {
+      request().then(() => {
+        locked.current = true;
+      });
+    }
+  };
+
+  /* Lock/unlock on component mount/unmount */
+  React.useEffect(() => {
+    lock();
+
+    return () => {
+      if (locked.current) {
+        release().then(() => {
+          locked.current = false;
+        });
+      }
+    };
+  }, []);
+
+  /* Re-lock after visibility change */
+  React.useEffect(() => {
+    const listener = () => {
+      if (document.visibilityState === "visible" && locked.current === false) {
+        lock();
+      }
+    };
+    window.addEventListener("visibilitychange", listener);
+
+    return () => {
+      window.removeEventListener("visibilitychange", listener);
+    };
+  }, []);
 }
